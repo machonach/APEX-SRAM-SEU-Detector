@@ -1,0 +1,33 @@
+# Requirements for SEU Detector project
+
+# Core data science libraries
+numpy>=1.20.0
+pandas>=1.3.0
+matplotlib>=3.4.0
+seaborn>=0.11.0
+scikit-learn>=1.0.0
+joblib>=1.0.0
+
+# Dashboard and visualization
+dash>=2.0.0
+plotly>=5.0.0
+
+# API server
+fastapi>=0.70.0
+uvicorn>=0.15.0
+pydantic>=1.9.0
+httpx>=0.23.0  # Required for FastAPI TestClient
+
+# Hardware interface (for Raspberry Pi)
+RPi.GPIO>=0.7.0; platform_machine == 'armv7l' or platform_machine == 'armv6l'
+spidev>=3.5; platform_machine == 'armv7l' or platform_machine == 'armv6l'
+smbus2>=0.4.1; platform_machine == 'armv7l' or platform_machine == 'armv6l'
+pyserial>=3.5
+adafruit-circuitpython-bmp280>=2.0.0; platform_machine == 'armv7l' or platform_machine == 'armv6l'
+
+# Communication
+paho-mqtt>=1.5.0
+
+# For checking test coverage
+pytest>=6.0.0
+pytest-cov>=2.0.0

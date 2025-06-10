@@ -1,0 +1,42 @@
+name: SEU Detector PR Checks
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov black isort
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Check code formatting
+      run: |
+        black --check --diff .
+        isort --check --diff .
+      continue-on-error: true
+
+    - name: Run quick tests
+      run: |
+        pytest test_seu_detector.py::TestSEUDetector::test_data_loading test_seu_detector.py::TestSEUDetector::test_data_processing
+
+    - name: Check test coverage change
+      uses: orgoro/coverage@v3
+      with:
+        coverageFile: coverage.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        threshold: 0
+        thresholdTarget: 0
+      continue-on-error: true
