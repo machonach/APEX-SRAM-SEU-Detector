@@ -47,13 +47,13 @@ Quick start:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/seu-detector.git
+git clone https://github.com/machonach/APEX-SRAM-SEU-Detector
 cd seu-detector
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Generate synthetic data (if no real data available)
+# Generate synthetic data (temporary)
 cd ml_pipeline
 python SEU-Synthetic-Data-Creator.py
 
