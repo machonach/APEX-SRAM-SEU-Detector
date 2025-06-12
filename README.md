@@ -83,4 +83,4 @@ The system provides insights into SEU occurrences based on altitude, temperature
 ## Team
 
 Members:
-Yasashvee Karthi, Alexander Jameson, Om Ghosh, Atrey Iyer
+Alexander Jameson, Yasashvee Karthi, Om Ghosh
