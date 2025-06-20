@@ -43,7 +43,6 @@ try:
     import board
     import busio
     import adafruit_bmp280
-    import adafruit_gps
     
     # Communication libraries
     import paho.mqtt.client as mqtt
@@ -517,7 +516,7 @@ class SEUDetector:
             
         except Exception as e:
             logger.error(f"SRAM error check failed: {str(e)}")
-      def read_sensors(self):
+    def read_sensors(self):
         """Read all sensor data and update the data structure"""
         if self.config["simulation_mode"]:
             self._simulate_sensor_data()
@@ -821,7 +820,7 @@ class SEUDetector:
         
         # Log to console
         logger.info(f"Alt:{data_packet['altitude']:.1f}m, Temp:{data_packet['temperature']:.1f}C, SEUs:{data_packet['bit_flips_count']}")
-      def get_system_health(self) -> Dict:
+    def get_system_health(self) -> Dict:
         """Get system health information
         
         Returns:
