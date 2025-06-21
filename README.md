@@ -15,6 +15,10 @@ This project consists of multiple components:
 The system collects data on Single-Event Upsets (SEUs) in SRAM memory, such as bit flips, from ground level up to 30 km in altitude, along with environmental parameters (pressure, altitude, temperature) and location. This data is used to train machine learning models that can predict SEU events in real time.
 
 <picture>
+  <img alt="Main Detector" src="images/SRAM.png" width="400">
+</picture>
+
+<picture>
  <img alt="Main Component" src="images/IMG_5444.png" width="400">
 </picture>
 
