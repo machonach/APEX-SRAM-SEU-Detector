@@ -962,6 +962,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
     parser.add_argument("-o", "--output", help="Path for data output")
     parser.add_argument("--save-config", help="Save current config to file and exit")
+    parser.add_argument("--simulate", action="store_true", help="Run script in simulation mode")
     parser.add_argument("--version", action="store_true", help="Show version and exit")
     args = parser.parse_args()
     
