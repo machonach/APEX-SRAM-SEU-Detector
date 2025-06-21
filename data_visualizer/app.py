@@ -2,9 +2,20 @@ import dash
 from dash import dcc, html
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import os
 import sys
 from pathlib import Path
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+# Import the ML pipeline
+sys.path.append(str(Path(__file__).parent.parent / 'ml_pipeline'))
+from SEU_ML_Pipeline import SEUDetector
+
+# Initialize the ML model
+seu_detector = SEUDetector()
 
 # Get path to project root to help find the data file
 current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
@@ -50,6 +61,25 @@ if df is None:
     df = pd.DataFrame(columns=['timestamp', 'altitude', 'temperature', 
                               'sram_region_1_errors', 'sram_region_2_errors',
                               'sram_region_3_errors', 'cosmic_intensity'])
+
+# Process data through ML pipeline if data is loaded
+if df is not None:
+    # Preprocess the data
+    processed_df = seu_detector.preprocess_data(df.copy())
+    
+    # Split data for training and comparison (default 70% training)
+    train_df, test_df = train_test_split(processed_df, test_size=0.3, random_state=42)
+    
+    # Train the model on training data
+    seu_detector.train(train_df)
+    
+    # Get predictions for test data
+    test_predictions = seu_detector.predict(test_df)
+    test_df['predicted_seu_count'] = test_predictions
+    
+    # Calculate prediction metrics
+    mse = mean_squared_error(test_df['bit_flips_count'], test_df['predicted_seu_count'])
+    r2 = r2_score(test_df['bit_flips_count'], test_df['predicted_seu_count'])
 
 # Define functions to create charts based on available columns
 def create_errors_time_chart(df):
@@ -142,6 +172,76 @@ app.layout = html.Div(style={'padding': '20px', 'font-family': 'Arial'}, childre
                    style={'backgroundColor': '#007bff', 'color': 'white', 'padding': '10px 15px',
                           'border': 'none', 'borderRadius': '5px', 'cursor': 'pointer'}),
         html.Div(id="data-table-container")
+    ]),    dcc.Tabs([
+        dcc.Tab(label='Raw Data', children=[
+            html.Div([
+                html.H3("SRAM Errors Over Time"),
+                dcc.Graph(
+                    id='bit-flips-over-time-tab',
+                    figure=create_errors_time_chart(df)
+                )
+            ], style={'marginBottom': '40px'}),
+
+            html.Div([
+                html.H3("Altitude Over Time"),
+                dcc.Graph(
+                    id='altitude-over-time-tab',
+                    figure=create_altitude_chart(df)
+                )
+            ], style={'marginBottom': '40px'}),
+
+            html.Div([
+                html.H3("Cosmic Intensity vs Temperature"),
+                dcc.Graph(
+                    id='cosmic-temperature-tab',
+                    figure=create_cosmic_temp_chart(df)
+                )
+            ], style={'marginBottom': '40px'}),
+
+            html.Div([
+                html.H3("Altitude vs SRAM Errors"),
+                dcc.Graph(
+                    id='altitude-vs-errors-tab',
+                    figure=create_altitude_errors_chart(df)
+                )
+            ])
+        ]),
+        dcc.Tab(label='ML Predictions', children=[
+            html.Div([
+                # Prediction metrics
+                html.Div([
+                    html.H3("Model Performance"),
+                    html.P(f"Mean Squared Error: {mse:.4f}"),
+                    html.P(f"R² Score: {r2:.4f}")
+                ]),
+                
+                # Prediction vs Actual Plot
+                dcc.Graph(
+                    id='prediction-comparison',
+                    figure=px.scatter(test_df, 
+                                    x='bit_flips_count',
+                                    y='predicted_seu_count',
+                                    title='Predicted vs Actual SEU Counts',
+                                    labels={'bit_flips_count': 'Actual SEU Count',
+                                           'predicted_seu_count': 'Predicted SEU Count'})
+                ),
+                
+                # Time series comparison
+                dcc.Graph(
+                    id='time-series-comparison',
+                    figure=go.Figure([
+                        go.Scatter(x=test_df['timestamp'], 
+                                 y=test_df['bit_flips_count'],
+                                 name='Actual SEUs'),
+                        go.Scatter(x=test_df['timestamp'], 
+                                 y=test_df['predicted_seu_count'],
+                                 name='Predicted SEUs')
+                    ]).update_layout(title='SEU Counts Over Time',
+                                   xaxis_title='Time',
+                                   yaxis_title='SEU Count')
+                )
+            ])
+        ])
     ])
 ])
 
@@ -327,7 +427,49 @@ def generate_new_synthetic_data(n_clicks):
         create_altitude_errors_chart(df)
     )
 
-# Run server
+# Callback to update predictions based on training size
+@app.callback(
+    [Output('prediction-comparison', 'figure'),
+     Output('time-series-comparison', 'figure')],
+    [Input('training-size-slider', 'value')]
+)
+def update_predictions(train_size):
+    if df is None:
+        return {}, {}
+        
+    # Split data based on slider value
+    train_df, test_df = train_test_split(processed_df, 
+                                        test_size=(100-train_size)/100, 
+                                        random_state=42)
+    
+    # Train model and get predictions
+    seu_detector.train(train_df)
+    test_predictions = seu_detector.predict(test_df)
+    test_df['predicted_seu_count'] = test_predictions
+    
+    # Create comparison scatter plot
+    scatter_fig = px.scatter(test_df,
+                            x='bit_flips_count',
+                            y='predicted_seu_count',
+                            title='Predicted vs Actual SEU Counts',
+                            labels={'bit_flips_count': 'Actual SEU Count',
+                                   'predicted_seu_count': 'Predicted SEU Count'})
+    
+    # Create time series comparison plot
+    time_series_fig = go.Figure([
+        go.Scatter(x=test_df['timestamp'],
+                  y=test_df['bit_flips_count'],
+                  name='Actual SEUs'),
+        go.Scatter(x=test_df['timestamp'],
+                  y=test_df['predicted_seu_count'],
+                  name='Predicted SEUs')
+    ]).update_layout(title='SEU Counts Over Time',
+                    xaxis_title='Time',
+                    yaxis_title='SEU Count')
+    
+    return scatter_fig, time_series_fig
+
+# Run the app
 if __name__ == '__main__':
     print("\n" + "="*50)
     print("Starting Dash server - SEU Detector Dashboard")
@@ -336,8 +478,4 @@ if __name__ == '__main__':
     print("Press Ctrl+C to stop the server")
     print("="*50 + "\n")
     
-    try:
-        # For newer Dash versions (>=2.0.0), use app.run instead of app.run_server
-        app.run(debug=True)
-    except Exception as e:
-        print(f"Error running Dash server: {e}")
+    app.run(debug=True)
