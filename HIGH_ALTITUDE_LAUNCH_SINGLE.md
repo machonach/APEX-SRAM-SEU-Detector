@@ -58,7 +58,15 @@ Higher radiation levels will be perfect for SEU detection, but be aware:
 # On the Pi Zero 2 W
 cd APEX-SRAM-SEU-Detector
 chmod +x high_altitude_mode.py
-python3 high_altitude_mode.py --enable --config custom_launch_config.json
+python3 high_altitude_mode.py --enable --auto-start --config custom_launch_config.json
+
+# CRITICAL: Verify auto-start is properly enabled
+systemctl is-enabled seu-detector  # Should output "enabled"
+
+# Test a reboot to ensure it starts automatically
+sudo reboot
+# (wait for Pi to reboot, then reconnect)
+systemctl status seu-detector  # Should show "active (running)"
 ```
 
 ### 2. Power Management Setup
@@ -81,9 +89,53 @@ sudo chmod 777 /data/seu_flight
 - Set proper sampling rates
 - Enable offline storage
 
-### 5. Launch Scripts
-- Create an automated launch script that starts at power-up
-- Test the script multiple times before launch
+### 5. Power-Up Auto-Start
+- Confirm the systemd service (seu-detector.service) is enabled
+- The `--auto-start` flag ensures the detector starts immediately when power is applied
+- **Test auto-start by disconnecting and reconnecting power** to simulate launch conditions
+- Watch the logs after power-up to verify immediate startup: `journalctl -u seu-detector -f`
+
+## Power-On Test Procedure
+
+To ensure the system will start automatically during the balloon launch when power is applied, follow this test procedure:
+
+1. Configure high-altitude mode with auto-start:
+```bash
+cd APEX-SRAM-SEU-Detector
+python3 high_altitude_mode.py --enable --auto-start
+```
+
+2. Verify the service is enabled:
+```bash
+systemctl is-enabled seu-detector  # Should output "enabled"
+```
+
+3. **Simulate a power cycle:**
+   - Shut down the Pi: `sudo shutdown -h now`
+   - After shutdown is complete, disconnect power
+   - Wait 30 seconds
+   - Reconnect power
+
+4. Wait 2-3 minutes for the Pi to boot completely
+
+5. Connect to the Pi and verify the service started automatically:
+```bash
+systemctl status seu-detector
+```
+
+6. Confirm data is being collected:
+```bash
+journalctl -u seu-detector -n 20
+```
+
+7. Check data files are being saved:
+```bash
+ls -la ~/APEX-SRAM-SEU-Detector/data/
+```
+
+If all steps pass, your system is configured correctly for autonomous operation during the balloon flight.
+
+> **CRITICAL FLIGHT CHECK:** For extra certainty, always perform one final test with the *actual* flight battery that will be used during launch.
 
 ## Launch Day Procedures
 

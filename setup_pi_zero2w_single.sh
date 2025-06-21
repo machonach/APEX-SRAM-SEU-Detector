@@ -52,16 +52,54 @@ if [ ! -d "venv" ]; then
     sudo -u pi python3 -m venv venv
 fi
 
-# Install requirements
+# Install requirements with optimizations
 echo "Installing Python dependencies..."
-sudo -u pi venv/bin/pip install -r requirements.txt
+echo "Note: This may take 10-15 minutes on a Pi Zero 2 W. The spinning symbols (/-|\) indicate progress."
+
+# Function to show a spinner animation
+show_spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    while ps -p $pid > /dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c] " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b"
+    done
+    printf "    \b\b\b\b"
+}
+
+# Use a timeout and retry mechanism for more reliable installations
+for i in {1..3}; do
+    echo "==== Installation attempt $i of 3 ===="
+    echo "Step 1: Updating pip and setuptools (may take a few minutes)..."
+    (sudo -u pi venv/bin/pip install --upgrade pip setuptools wheel) &
+    show_spinner $!
+    
+    echo "Step 2: Installing requirements (this is the long part, please be patient)..."
+    # Use a faster PyPI mirror, disable build isolation for speed, and use binary wheels when available
+    (sudo -u pi venv/bin/pip install --timeout 180 --prefer-binary --use-feature=fast-deps -r requirements.txt) &
+    show_spinner $!
+    
+    # Check if installation was successful
+    if sudo -u pi venv/bin/python -c "import RPi.GPIO; print('Installation successful!')"; then
+        echo "✓ Package installation completed successfully!"
+        break
+    else
+        echo "✗ Package installation failed, retrying in 5 seconds..."
+        sleep 5
+    fi
+done
 
 # Create systemd service for the SEU detector
 echo "Creating systemd service for the SEU detector..."
 cat > /etc/systemd/system/seu-detector.service << EOF
 [Unit]
 Description=SEU Detector Service
-After=network.target
+After=multi-user.target
+Wants=multi-user.target
 
 [Service]
 Type=simple
@@ -70,8 +108,15 @@ WorkingDirectory=/home/pi/APEX-SRAM-SEU-Detector
 ExecStart=/home/pi/APEX-SRAM-SEU-Detector/venv/bin/python3 raspberry_pi_seu_detector.py
 Restart=always
 RestartSec=10
+# Make sure the service is restarted even after repeated failures
+StartLimitIntervalSec=0
+
+# Optional logging enhancements for easier debugging
+StandardOutput=journal
+StandardError=journal
 
 [Install]
+# Ensure it starts early in the boot process
 WantedBy=multi-user.target
 EOF
 

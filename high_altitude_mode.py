@@ -37,7 +37,7 @@ LAUNCH_CONFIG = {
     "wifi_check_interval_min": 15, # Check for ground WiFi every 15 minutes during descent
 }
 
-def enable_launch_mode(config=None):
+def enable_launch_mode(config=None, enable_autostart=False):
     """Enable launch mode for high-altitude flight"""
     if config is None:
         config = LAUNCH_CONFIG
@@ -93,6 +93,26 @@ def enable_launch_mode(config=None):
         logger.info(f"Setting up auto-shutdown after {config['shutdown_delay_hours']} hours")
         os.system(f"shutdown -h +{int(shutdown_seconds/60)}")
     
+    # Enable auto-start if requested
+    if enable_autostart:
+        logger.info("Ensuring SEU detector auto-starts on boot...")
+        # Make sure the service is enabled
+        autostart_status = os.system("systemctl is-enabled seu-detector.service")
+        if autostart_status != 0:
+            # Enable the service if it's not already enabled
+            os.system("sudo systemctl enable seu-detector.service")
+            logger.info("SEU detector service enabled for auto-start on boot")
+        else:
+            logger.info("SEU detector service is already enabled for auto-start")
+        
+        # Double-check the service status
+        service_status = subprocess.run(["systemctl", "is-enabled", "seu-detector.service"], 
+                                        capture_output=True, text=True)
+        if "enabled" in service_status.stdout:
+            logger.info("Verified: SEU detector will start automatically on power-up")
+        else:
+            logger.warning("Warning: Auto-start may not be properly configured")
+    
     # Restart SEU detector services
     logger.info("Restarting SEU detector services")
     os.system("sudo systemctl restart seu-detector.service")
@@ -141,6 +161,7 @@ def main():
     parser.add_argument("--disable", action="store_true", help="Disable launch mode")
     parser.add_argument("--recovery-check", action="store_true", help="Check for recovery mode")
     parser.add_argument("--config", help="Path to custom launch configuration file")
+    parser.add_argument("--auto-start", action="store_true", help="Ensure system auto-starts on power-up (recommended for flight)")
     args = parser.parse_args()
     
     if args.config:
@@ -155,7 +176,7 @@ def main():
         config = LAUNCH_CONFIG
     
     if args.enable:
-        enable_launch_mode(config)
+        enable_launch_mode(config, enable_autostart=args.auto_start)
     elif args.disable:
         # Disable launch mode
         logger.info("Disabling launch mode")

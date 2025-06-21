@@ -68,34 +68,71 @@ This script will:
 
 ## High-Altitude Configuration
 
-For high-altitude operation, run:
+For high-altitude operation, run this **before your flight**:
 
 ```bash
-python3 high_altitude_mode.py --enable
+python3 high_altitude_mode.py --enable --auto-start
 ```
 
 This will configure the system for:
-- Offline data storage
-- Power saving
-- Optimized sample rates
-- Disabled WiFi to save power
+- **Guaranteed automatic startup on power-up** (the `--auto-start` flag ensures this)
+- Fully offline data storage (no network needed)
+- Power saving optimizations
+- Optimized sample rates for altitude
+- Disabled WiFi to save power and avoid interference
 
-## Usage
+## Automatic Operation
 
-The SEU detector will automatically start at boot once configured. You can control it with:
+Once configured and powered on, the SEU detector will **automatically start collecting data without any intervention required**. The systemd service ensures the detector starts immediately when power is applied to the Pi. There are two key aspects to this automatic operation:
+
+1. **Immediate startup on power** - The SEU detector will start as soon as the Pi receives power
+2. **Fully offline operation** - No network, keyboard, monitor, or user input is needed
+
+### Pre-Flight Check
+
+Before sealing your payload, ALWAYS verify proper operation using the verification script:
 
 ```bash
-# Check status
+# Make the verification script executable
+chmod +x verify_auto_start.sh
+
+# Run the verification script as root
+sudo ./verify_auto_start.sh
+```
+
+The script will check:
+1. If the service is installed
+2. If it's enabled for auto-start
+3. If it's currently running
+4. If there are any errors in the logs
+
+For a complete verification, also perform these additional tests:
+
+```bash
+# Simulate a power cycle by shutting down
+sudo shutdown -h now
+# Physically disconnect power for 30 seconds
+# Reconnect power and wait 2-3 minutes
+# Log back in and check status
 systemctl status seu-detector
 
+# View live data collection to verify sensors are working (CTRL+C to exit)
+journalctl -u seu-detector -f
+```
+
+> **CRITICAL:** Always test with the actual flight battery before launch to ensure everything works as expected in real conditions.
+```
+
+### Manual Control (for testing only)
+
+These commands are only needed during testing, not for the actual flight:
+
+```bash
 # Stop the service
 sudo systemctl stop seu-detector
 
 # Start the service
 sudo systemctl start seu-detector
-
-# Check logs
-journalctl -u seu-detector -f
 ```
 
 ## Launch Preparation
