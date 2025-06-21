@@ -140,7 +140,7 @@ class TestSEUDetector(unittest.TestCase):
         df['bit_flip_rate'] = df['bit_flips_count'] / df['time_delta']
         
         # Check if calculation is correct
-        expected_rate = self.sample_data['bit_flips_count'] / 600
+        expected_rate = (self.sample_data['bit_flips_count'] / 600).rename('bit_flip_rate')
         pd.testing.assert_series_equal(df['bit_flip_rate'], expected_rate)
         
         # Calculate cosmic ray intensity based on altitude

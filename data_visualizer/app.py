@@ -109,8 +109,8 @@ app.title = "SRAM SEU Event Dashboard"
 
 # Layout
 app.layout = html.Div(style={'padding': '20px', 'font-family': 'Arial'}, children=[
-    html.H1("🔬 SRAM SEU Event Dashboard", style={'textAlign': 'center'}),    html.Div([
-        html.H3("📈 SRAM Errors Over Time"),
+    html.H1("SRAM SEU Event Dashboard", style={'textAlign': 'center'}),    html.Div([
+        html.H3("SRAM Errors Over Time"),
         dcc.Graph(
             id='bit-flips-over-time',
             figure=create_errors_time_chart(df)
@@ -118,25 +118,25 @@ app.layout = html.Div(style={'padding': '20px', 'font-family': 'Arial'}, childre
     ], style={'marginBottom': '40px'}),
 
     html.Div([
-        html.H3("📡 Altitude Over Time"),
+        html.H3("Altitude Over Time"),
         dcc.Graph(
             id='altitude-over-time',
             figure=create_altitude_chart(df)
         )
     ], style={'marginBottom': '40px'}),    html.Div([
-        html.H3("🧭 Cosmic Intensity vs Temperature"),
+        html.H3("Cosmic Intensity vs Temperature"),
         dcc.Graph(
             id='cosmic-temperature',
             figure=create_cosmic_temp_chart(df)
         )
     ], style={'marginBottom': '40px'}),    html.Div([
-        html.H3("📊 Altitude vs SRAM Errors"),
+        html.H3("Altitude vs SRAM Errors"),
         dcc.Graph(
             id='altitude-vs-errors',
             figure=create_altitude_errors_chart(df)
         )
     ]),    html.Div([
-        html.H3("📂 Data Table"),
+        html.H3("Data Table"),
         dcc.Store(id='df-store', data=df.to_dict('records')),
         html.Button("Refresh Data", id="refresh-data-btn", n_clicks=0,
                    style={'backgroundColor': '#007bff', 'color': 'white', 'padding': '10px 15px',
