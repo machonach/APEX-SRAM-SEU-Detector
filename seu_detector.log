@@ -1,0 +1,105 @@
+2025-06-20 23:48:27,782 - seu_detector - INFO - Starting SEU detector system
+2025-06-20 23:48:27,783 - seu_detector - INFO - Starting data processing thread
+2025-06-20 23:48:27,832 - seu_detector - WARNING - BMP280 initialization failed: No I2C device at address: 0x77
+2025-06-20 23:48:27,833 - seu_detector - WARNING - GPS initialization failed: [Errno 13] could not open port /dev/ttyS0: [Errno 13] Permission denied: '/dev/ttyS0'
+2025-06-20 23:48:27,834 - seu_detector - INFO - SEU Detector initialized successfully
+2025-06-20 23:48:27,834 - seu_detector - INFO - Starting SEU detector
+2025-06-20 23:48:27,835 - seu_detector - ERROR - Error in SEU detector: 'SEUDetector' object has no attribute 'error_count'
+2025-06-20 23:48:27,837 - seu_detector - INFO - Cleaning up resources...
+2025-06-20 23:48:27,838 - seu_detector - INFO - Cleanup complete
+2025-06-20 23:52:37,461 - seu_detector - INFO - Starting SEU detector system
+2025-06-20 23:52:37,463 - seu_detector - INFO - Starting data processing thread
+2025-06-20 23:52:37,507 - seu_detector - WARNING - BMP280 initialization failed: No I2C device at address: 0x77
+2025-06-20 23:52:37,507 - seu_detector - WARNING - GPS initialization failed: [Errno 13] could not open port /dev/ttyS0: [Errno 13] Permission denied: '/dev/ttyS0'
+2025-06-20 23:52:37,508 - seu_detector - INFO - SEU Detector initialized successfully
+2025-06-20 23:52:37,508 - seu_detector - INFO - Starting SEU detector
+2025-06-20 23:52:37,509 - seu_detector - ERROR - Error in SEU detector: 'SEUDetector' object has no attribute 'error_count'
+2025-06-20 23:52:37,511 - seu_detector - INFO - Cleaning up resources...
+2025-06-20 23:52:37,512 - seu_detector - INFO - Cleanup complete
+2025-06-20 23:55:47,713 - seu_detector - INFO - Starting SEU detector system
+2025-06-20 23:55:47,714 - seu_detector - INFO - Starting data processing thread
+2025-06-20 23:55:47,756 - seu_detector - WARNING - BMP280 initialization failed: No I2C device at address: 0x77
+2025-06-20 23:55:47,758 - seu_detector - WARNING - GPS initialization failed: [Errno 13] could not open port /dev/ttyS0: [Errno 13] Permission denied: '/dev/ttyS0'
+2025-06-20 23:55:47,759 - seu_detector - INFO - SEU Detector initialized successfully
+2025-06-20 23:55:47,759 - seu_detector - INFO - Starting SEU detector
+2025-06-20 23:55:47,760 - seu_detector - ERROR - Error in SEU detector: 'SEUDetector' object has no attribute 'error_count'
+2025-06-20 23:55:47,763 - seu_detector - INFO - Cleaning up resources...
+2025-06-20 23:55:47,764 - seu_detector - INFO - Cleanup complete
+2025-06-21 00:04:10,842 - seu_detector - INFO - Starting SEU detector system
+2025-06-21 00:04:10,843 - seu_detector - INFO - Starting data processing thread
+2025-06-21 00:04:10,886 - seu_detector - WARNING - BMP280 initialization failed: No I2C device at address: 0x77
+2025-06-21 00:04:10,887 - seu_detector - WARNING - GPS initialization failed: [Errno 13] could not open port /dev/ttyS0: [Errno 13] Permission denied: '/dev/ttyS0'
+2025-06-21 00:04:10,888 - seu_detector - INFO - SEU Detector initialized successfully
+2025-06-21 00:04:10,888 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,889 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,891 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,891 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,892 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,893 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,893 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,893 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,894 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,895 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,895 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,896 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,896 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,897 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,898 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,898 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,899 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,900 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,901 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,901 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,903 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,903 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,904 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,905 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,906 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,906 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,908 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:04:10,908 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:04:10,909 - seu_detector - ERROR - Error in run loop: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,911 - seu_detector - ERROR - Error in SEU detector: 'SEUDetector' object has no attribute 'last_sensor_read'
+2025-06-21 00:04:10,913 - seu_detector - INFO - Cleaning up resources...
+2025-06-21 00:04:10,914 - seu_detector - INFO - Cleanup complete
+2025-06-21 00:06:52,463 - seu_detector - INFO - Starting SEU detector system
+2025-06-21 00:06:52,464 - seu_detector - INFO - Starting data processing thread
+2025-06-21 00:06:52,505 - seu_detector - WARNING - BMP280 initialization failed: No I2C device at address: 0x77
+2025-06-21 00:06:52,506 - seu_detector - WARNING - GPS initialization failed: [Errno 13] could not open port /dev/ttyS0: [Errno 13] Permission denied: '/dev/ttyS0'
+2025-06-21 00:06:52,506 - seu_detector - INFO - SEU Detector initialized successfully
+2025-06-21 00:06:52,507 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,507 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,509 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,510 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,510 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,511 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,511 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,512 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,513 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,513 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,513 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,514 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,515 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,515 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,516 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,516 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,517 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,518 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,519 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,519 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,520 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,521 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,521 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,523 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,523 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,524 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,525 - seu_detector - INFO - Attempting to continue after error...
+2025-06-21 00:06:52,526 - seu_detector - INFO - Starting SEU detector
+2025-06-21 00:06:52,526 - seu_detector - ERROR - Error in run loop: 'sensor_read_interval'
+2025-06-21 00:06:52,528 - seu_detector - ERROR - Error in SEU detector: 'sensor_read_interval'
+2025-06-21 00:06:52,530 - seu_detector - INFO - Cleaning up resources...
+2025-06-21 00:06:52,531 - seu_detector - INFO - Cleanup complete
+2025-06-21 00:15:15,791 - seu_detector - INFO - Starting SEU detector system
+2025-06-21 00:15:15,792 - seu_detector - INFO - Starting data processing thread
+2025-06-21 00:15:15,793 - seu_detector - ERROR - Hardware initialization failed: 'SEUDetector' object has no attribute '_cosmic_ray_callback'
+2025-06-21 00:15:15,794 - seu_detector - ERROR - Failed to start system: 'SEUDetector' object has no attribute '_cosmic_ray_callback'

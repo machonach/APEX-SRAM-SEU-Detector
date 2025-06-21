@@ -237,6 +237,8 @@ class SEUDetector:
         """
         self.running = False
         self.config = DEFAULT_CONFIG.copy()
+        self.error_count = 0
+        self.last_sensor_read = time.time()
         
         # Apply any provided configuration
         if config:
@@ -348,6 +350,131 @@ class SEUDetector:
         self.start_time = time.time()
         
         logger.info("SEU Detector initialized successfully")
+def __init__(self, config: Optional[Dict] = None):
+
+    """Initialize the SEU detector
+
+    Args:
+        config: Configuration parameters (see DEFAULT_CONFIG)
+    """
+
+    # Use default config and update if provided
+    self.config = DEFAULT_CONFIG.copy()
+    if config:
+        self.config.update(config)
+
+    # Setup logger level
+    log_level = self.config.get("log_level", "INFO").upper()
+    logger.setLevel(getattr(logging, log_level))
+
+    # Control flags, counters, and timers
+    self.running = False
+    self.error_count = 0
+    self.last_sensor_read = time.time()
+    self.sensor_read_interval = 1.0 / self.config.get("sample_rate", 10)
+    self.start_time = time.time()
+
+    # Data queue for threading
+    self.data_queue = queue.Queue()
+
+    # Cosmic ray count and last timestamp
+    self.cosmic_count = 0
+    self.last_cosmic_timestamp = 0
+
+    # SRAM test pattern index
+    self.current_pattern = 0
+
+    # Simulation mode flag
+    self.simulation_mode = self.config.get("simulation_mode", False)
+
+    # Data dictionary for sensor and SEU info
+    self.data = {
+        "timestamp": "",
+        "uptime_seconds": 0,
+        "chip_count": self.config.get("sram_chips", 4),
+        "pattern": self.config.get("test_pattern", [0x55])[0],
+        "seu_count": 0,
+        "seu_by_chip": [0] * self.config.get("sram_chips", 4),
+        "seu_by_pattern": [0] * len(self.config.get("test_pattern", [0x55, 0xAA, 0xFF, 0x00])),
+        "max_run_length": 0,
+        "temperature_c": 0,
+        "pressure_hpa": 0,
+        "altitude_m": 0,
+        "latitude": 0,
+        "longitude": 0,
+        "speed_kmh": 0,
+        "satellites": 0,
+        "cosmic_counts": 0,
+        "cpu_temp_c": 0,
+        "cpu_percent": 0,
+    }
+
+    # Prepare output directory
+    self.output_dir = Path(self.config.get("output_dir", "./output"))
+    self.output_dir.mkdir(exist_ok=True, parents=True)
+
+    # Hardware interfaces placeholders
+    self.spi = None
+    self.bmp280 = None
+    self.gps = None
+    self.mqtt_client = None
+
+    try:
+        # SPI setup
+        spi_bus = self.config.get("spi_bus", 0)
+        spi_device = self.config.get("spi_device", 0)
+        self.spi = spidev.SpiDev()
+        self.spi.open(spi_bus, spi_device)
+        self.spi.max_speed_hz = 4000000  # 4 MHz
+        self.spi.mode = 0
+
+        # GPIO setup
+        GPIO.setmode(GPIO.BCM)
+        cs_pins = self.config.get("cs_pins", [])
+        sram_chips = self.config.get("sram_chips", 4)
+        for pin in cs_pins[:sram_chips]:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, GPIO.HIGH)  # CS inactive
+
+        # Cosmic ray counter pin setup
+        cosmic_pin = self.config.get("cosmic_counter_pin")
+        if cosmic_pin is not None:
+            GPIO.setup(cosmic_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+            GPIO.add_event_detect(cosmic_pin, GPIO.RISING, callback=self._cosmic_ray_callback)
+
+        # BMP280 sensor
+        try:
+            i2c = busio.I2C(board.SCL, board.SDA)
+            self.bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
+            self.bmp280.sea_level_pressure = 1013.25
+        except Exception as e:
+            logger.warning(f"BMP280 initialization failed: {e}")
+            self.bmp280 = None
+
+        # GPS setup
+        try:
+            gps_port = self.config.get("gps_port", "/dev/ttyS0")
+            gps_baud = self.config.get("gps_baud", 9600)
+            self.uart = serial.Serial(gps_port, baudrate=gps_baud, timeout=1)
+            self.gps = adafruit_gps.GPS(self.uart, debug=False)
+            self.gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+            self.gps.send_command(b"PMTK220,1000")
+        except Exception as e:
+            logger.warning(f"GPS initialization failed: {e}")
+            self.gps = None
+
+        # MQTT client setup
+        mqtt_broker = self.config.get("mqtt_broker")
+        if mqtt_broker:
+            self.mqtt_client = mqtt.Client()
+            self.mqtt_client.connect(mqtt_broker, self.config.get("mqtt_port", 1883))
+            self.mqtt_client.loop_start()
+
+    except Exception as e:
+        logger.error(f"Hardware initialization failed: {e}")
+        raise
+
+    logger.info("SEU Detector initialized successfully")
     
     def _cosmic_ray_callback(self, channel):
         """Callback function for cosmic ray counter"""
@@ -699,7 +826,7 @@ def data_processing_thread(config):
     data_buffer = []  # Buffer for batching API requests
     
     # Set up MQTT if enabled
-    if config["mqtt_enabled"]:
+    if config.get("mqtt.enabled", False):
         try:
             mqtt_client = mqtt.Client()
             # Add authentication if provided
