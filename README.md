@@ -80,6 +80,45 @@ The system provides insights into SEU occurrences based on altitude, temperature
   <img alt="Synthetic Data Analysis" src="images/seu_synthetic_analysis_results.png" width="604">
 </picture>
 
+## Accessing and Using the Dashboard
+
+The project includes an interactive dashboard for visualizing SEU data, sensor readings, and machine learning predictions.
+
+### Starting the Dashboard
+
+1. Make sure you have installed all dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Generate or collect SEU data (see above for data generation).
+3. To launch the dashboard, run:
+   ```bash
+   python data_visualizer/app.py
+   ```
+   or, for the integrated dashboard:
+   ```bash
+   python integrated_dashboard.py
+   ```
+
+### Dashboard Features
+- **Raw Data Tab:** Visualizes collected SEU and sensor data over time.
+- **ML Predictions Tab:**
+  - Lets you select the percentage of data used for training the machine learning model.
+  - Compares predicted SEU counts to actual values using scatter and time series plots.
+  - Shows model performance metrics (MSE, R² score).
+- **Interactive Controls:**
+  - Use the slider to adjust the training/testing split and see how the model performs on new data.
+
+### Accessing the Dashboard
+- By default, the dashboard runs locally at: [http://127.0.0.1:8050/](http://127.0.0.1:8050/)
+- Open this URL in your web browser after starting the dashboard script.
+
+### Custom Data
+- The dashboard loads data from CSV files (e.g., `ml_pipeline/seu_synthetic_data.csv`).
+- To use your own data, ensure it is in CSV format with columns for timestamp, altitude, temperature, bit flips, etc.
+
+For more details on dashboard usage or troubleshooting, see the [INSTALLATION.md](INSTALLATION.md) and comments in `data_visualizer/app.py`.
+
 ## Team
 
 Members:
